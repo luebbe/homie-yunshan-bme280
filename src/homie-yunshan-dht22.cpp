@@ -1,5 +1,5 @@
 #define FW_NAME "yunshan-relay-contact-dht"
-#define FW_VERSION "1.0.1"
+#define FW_VERSION "1.0.3"
 
 #include <Homie.h>
 #include "homie-node-collection.h"
@@ -15,19 +15,27 @@ ContactNode contactNode("contact", 5);
 DHT22Node dht22IndoorNode("indoor", 13);
 DHT22Node dht22OutdoorNode("outdoor", 12);
 
+// Setup OTA logging via Homie logger
+OtaLogger ota;
+
 void setupHandler() {
+  // This is called after the MQTT_CONNECTED event
+  ota.setup();
   // Advertise units for sensor nodes
   dht22IndoorNode.setupHandler();
   dht22OutdoorNode.setupHandler();
 };
 
+void loopHandler() {
+  ota.loop();
+}
 
 void setup() {
   Serial.begin(SERIAL_SPEED);
   Serial << endl << endl;
 
   welcome();
-  otaSetup();
+  ota.setup();
 
   Homie_setFirmware(FW_NAME, FW_VERSION);
 
@@ -35,10 +43,12 @@ void setup() {
   Homie.disableLedFeedback();
 
   Homie.setSetupFunction(setupHandler);
+  Homie.setLoopFunction(loopHandler);
+
   Homie.setup();
 }
 
 void loop() {
    Homie.loop();
-   otaLoop();
+   ota.loop();
 }
