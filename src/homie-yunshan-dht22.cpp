@@ -1,11 +1,10 @@
 #define FW_NAME "yunshan-relay-contact-dht"
-#define FW_VERSION "1.0.3"
+#define FW_VERSION "1.0.4"
 
 #include <Homie.h>
-#include "homie-node-collection.h"
-
-// I prefer to see the first ESP Boot messages as well, hence 74880 instead of 115200
-#define SERIAL_SPEED 74880
+#include "ota.hpp"
+#include "welcome.hpp"
+#include "homie-node-collection.hpp"
 
 // Yunshan relay specific pins
 RelayNode relayNode("relay", 4);
@@ -16,7 +15,9 @@ DHT22Node dht22IndoorNode("indoor", 13);
 DHT22Node dht22OutdoorNode("outdoor", 12);
 
 // Setup OTA logging via Homie logger
+// Setup OTA logging via Homie logger
 OtaLogger ota;
+Welcome welcome(FW_NAME, FW_VERSION);
 
 void setupHandler() {
   // This is called after the MQTT_CONNECTED event
@@ -34,7 +35,7 @@ void setup() {
   Serial.begin(SERIAL_SPEED);
   Serial << endl << endl;
 
-  welcome();
+  welcome.show();
   ota.setup();
 
   Homie_setFirmware(FW_NAME, FW_VERSION);
