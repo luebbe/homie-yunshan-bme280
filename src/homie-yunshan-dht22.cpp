@@ -1,11 +1,13 @@
 #define FW_NAME "yunshan-relay-contact-dht"
-#define FW_VERSION "1.0.5"
+#define FW_VERSION "1.0.6"
 
 #include <Homie.h>
 #include "ota.hpp"
 #include "welcome.hpp"
+#include "RelayNode.hpp"
 #include "PulseNode.hpp"
-#include "homie-node-collection.hpp"
+#include "DHT22Node.hpp"
+#include "BME280Node.hpp"
 
 // forward declaration
 void onOptoCouplerPulse();
@@ -39,9 +41,10 @@ void setupHandler()
 {
   // This is called after the MQTT_CONNECTED event
   ota.setup();
-  // Advertise units for sensor nodes
-  dht22IndoorNode.setupHandler();
+  // Advertise units for sensor nodes. 
+  // For reasons I don't understand, the bme280 node's units aren't all sent, when it is called after dht22Node.setupHandler()
   bme280OutdoorNode.setupHandler();
+  dht22IndoorNode.setupHandler();
 };
 
 void loopHandler()
