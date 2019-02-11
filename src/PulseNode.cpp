@@ -10,7 +10,7 @@
 
 PulseNode::PulseNode(const char *name,
                      const uint8_t pulsePin,
-                    //  void (*)(void) interruptCallback,
+                     //  void (*)(void) interruptCallback,
                      TStateChangeCallback stateChangeCallback)
     : HomieNode(name, "PulseNode")
 {
@@ -93,7 +93,7 @@ void PulseNode::loop()
 void PulseNode::setup()
 {
   advertise("active");
-  
+
   printCaption();
   Homie.getLogger() << cIndent << "Pin: " << _pulsePin << endl;
 

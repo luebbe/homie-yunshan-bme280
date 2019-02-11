@@ -41,11 +41,7 @@ void setupHandler()
 {
   // This is called after the MQTT_CONNECTED event
   ota.setup();
-  // Advertise units for sensor nodes. 
-  // For reasons I don't understand, the bme280 node's units aren't all sent, when it is called after dht22Node.setupHandler()
-  bme280OutdoorNode.setupHandler();
-  dht22IndoorNode.setupHandler();
-};
+}
 
 void loopHandler()
 {
