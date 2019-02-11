@@ -21,12 +21,12 @@ PulseNode pulseNode("pulse", PIN_OPTOCOUPLER);
 // Sensor nodes soldered directly to the ESP pins on the Yunshan board
 #define PIN_SDA 12
 #define PIN_SCL 14
-#define PIN_DHT22 13
-
-DHT22Node dht22IndoorNode("indoor", PIN_DHT22);
 
 #define I2C_BME280_ADDRESS 0x76
 BME280Node bme280OutdoorNode("outdoor", I2C_BME280_ADDRESS);
+
+#define PIN_DHT22 13
+DHT22Node dht22IndoorNode("indoor", PIN_DHT22);
 
 // Setup OTA logging via Homie logger
 OtaLogger ota;
