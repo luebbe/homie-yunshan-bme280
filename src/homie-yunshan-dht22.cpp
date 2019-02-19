@@ -1,7 +1,7 @@
 #define FW_NAME "yunshan-relay-contact-dht"
 #define FW_VERSION "1.0.6"
 
-#include <Homie.h>
+#include <Homie.hpp>
 #include "ota.hpp"
 #include "welcome.hpp"
 #include "RelayNode.hpp"
