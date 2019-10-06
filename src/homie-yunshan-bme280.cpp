@@ -1,16 +1,15 @@
-#define FW_NAME "yunshan-relay-contact-dht"
-#define FW_VERSION "1.0.6"
+#define FW_NAME "yunshan-relay-contact-bme280"
+#define FW_VERSION "1.0.7"
 
 #include <Homie.hpp>
 #include "ota.hpp"
 #include "welcome.hpp"
 #include "RelayNode.hpp"
 #include "PulseNode.hpp"
-#include "DHT22Node.hpp"
 #include "BME280Node.hpp"
 
 // forward declaration
-void onOptoCouplerPulse();
+void ICACHE_RAM_ATTR onOptoCouplerPulse();
 
 // Yunshan relay specific internal pins
 #define PIN_RELAY 4
@@ -22,17 +21,16 @@ PulseNode pulseNode("pulse", PIN_OPTOCOUPLER);
 #define PIN_SDA 12
 #define PIN_SCL 14
 
-#define I2C_BME280_ADDRESS 0x76
-BME280Node bme280OutdoorNode("outdoor", I2C_BME280_ADDRESS);
-
-#define PIN_DHT22 13
-DHT22Node dht22IndoorNode("indoor", PIN_DHT22);
+#define I2C_BME280_ADDRESS_1 0x76
+#define I2C_BME280_ADDRESS_2 0x77
+BME280Node bme280OutdoorNode("outdoor", I2C_BME280_ADDRESS_1);
+BME280Node bme280IndoorNode("indoor", I2C_BME280_ADDRESS_2);
 
 // Setup OTA logging via Homie logger
 OtaLogger ota;
 Welcome welcome(FW_NAME, FW_VERSION);
 
-void onOptoCouplerPulse()
+void ICACHE_RAM_ATTR onOptoCouplerPulse()
 {
   pulseNode.pulseDetected();
 }
@@ -56,6 +54,9 @@ void setup()
 
   welcome.show();
   ota.setup();
+
+  // One of the two bme280 nodes has to initialize the default temperatureoffset
+  bme280OutdoorNode.beforeHomieSetup();
 
   // Initializes I2C for BME280 sensor
   Homie.getLogger() << "• Wire begin SDA=" << PIN_SDA << " SCL=" << PIN_SCL << endl;
