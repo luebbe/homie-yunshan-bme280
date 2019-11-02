@@ -18,8 +18,8 @@ RelayNode relayNode("relay", PIN_RELAY);
 PulseNode pulseNode("pulse", PIN_OPTOCOUPLER);
 
 // Sensor nodes soldered directly to the ESP pins on the Yunshan board
-#define PIN_SDA 12
-#define PIN_SCL 14
+#define PIN_SDA 14 // Gelber Draht
+#define PIN_SCL 12 // Weißer Draht
 
 #define I2C_BME280_ADDRESS_1 0x76
 #define I2C_BME280_ADDRESS_2 0x77
@@ -39,6 +39,10 @@ void setupHandler()
 {
   // This is called after the MQTT_CONNECTED event
   ota.setup();
+  // Attach interupt for the pulse node *after* MQTT has connected.
+  // If we attach before Homie.setup(), we get stuck in an endless 
+  // reboot loop when interrupts are already coming in
+  attachInterrupt(PIN_OPTOCOUPLER, onOptoCouplerPulse, FALLING);
 }
 
 void loopHandler()
@@ -48,6 +52,8 @@ void loopHandler()
 
 void setup()
 {
+  Homie_setFirmware(FW_NAME, FW_VERSION);
+
   Serial.begin(SERIAL_SPEED);
   Serial << endl
          << endl;
@@ -55,16 +61,13 @@ void setup()
   welcome.show();
   ota.setup();
 
-  // One of the two bme280 nodes has to initialize the default temperatureoffset
+  // One of the two bme280 nodes has to initialize the default temperature offset
+  // Otherwise Homie will go into configuration mode
   bme280OutdoorNode.beforeHomieSetup();
 
   // Initializes I2C for BME280 sensor
   Homie.getLogger() << "• Wire begin SDA=" << PIN_SDA << " SCL=" << PIN_SCL << endl;
   Wire.begin(PIN_SDA, PIN_SCL);
-
-  attachInterrupt(PIN_OPTOCOUPLER, onOptoCouplerPulse, FALLING);
-
-  Homie_setFirmware(FW_NAME, FW_VERSION);
 
   Homie.disableResetTrigger();
   Homie.disableLedFeedback();
