@@ -1,5 +1,5 @@
 #define FW_NAME "yunshan-relay-contact-bme280"
-#define FW_VERSION "1.0.7"
+#define FW_VERSION "1.0.8"
 
 #include <Homie.hpp>
 #include "ota.hpp"
